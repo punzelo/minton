@@ -30,20 +30,36 @@ export default function LoginPage() {
     const password = String(form.get("password"));
     const mode = String(form.get("mode"));
 
-    const result =
-      mode === "signup"
-        ? await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              emailRedirectTo: getEmailRedirectTo(),
-            },
-          })
-        : await supabase.auth.signInWithPassword({ email, password });
+    if (mode === "signup") {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: getEmailRedirectTo(),
+        },
+      });
 
-    if (result.error) {
-      setMessage(result.error.message);
-      return;
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      if (!data.session) {
+        setMessage("회원가입 확인 메일을 보냈습니다. 메일 인증 후 로그인해주세요.");
+        return;
+      }
+    } else {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      if (!data.session) {
+        setMessage("로그인 세션을 만들지 못했습니다. 이메일 인증 여부를 확인해주세요.");
+        return;
+      }
     }
 
     router.push("/admin");
