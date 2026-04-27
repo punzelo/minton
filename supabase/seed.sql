@@ -1,0 +1,2 @@
+-- Optional sample data can be added after creating a user and tournament.
+-- The MVP is designed to create tournaments and teams through the web UI.
