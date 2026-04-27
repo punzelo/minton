@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server";
-import { createApiSupabase } from "@/lib/supabase/api";
+import { createApiSupabase, getRequestUser } from "@/lib/supabase/api";
 
-export async function GET() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+export async function GET(request: Request) {
+  const supabase = createApiSupabase(request);
 
-  if (!url || !key) {
+  if (!supabase) {
     return NextResponse.json([]);
   }
 
-  const { createClient } = await import("@supabase/supabase-js");
-  const supabase = createClient(url, key);
-  const { data, error } = await supabase.from("tournaments").select("*").eq("is_public", true).order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("tournaments")
+    .select("*")
+    .eq("is_public", true)
+    .order("created_at", { ascending: false });
 
   if (error) {
     return NextResponse.json({ message: error.message }, { status: 400 });
@@ -21,23 +22,22 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const supabase = createApiSupabase(request);
+  const { supabase, user } = await getRequestUser(request);
 
   if (!supabase) {
     return NextResponse.json({ message: "Supabase 환경변수가 필요합니다." }, { status: 500 });
   }
 
-  const body = await request.json();
-  const { data: userData } = await supabase.auth.getUser();
-
-  if (!userData.user) {
-    return NextResponse.json({ message: "로그인이 필요합니다." }, { status: 401 });
+  if (!user) {
+    return NextResponse.json({ message: "로그인이 필요합니다. 다시 로그인한 뒤 시도해주세요." }, { status: 401 });
   }
+
+  const body = await request.json();
 
   const { data, error } = await supabase
     .from("tournaments")
     .insert({
-      owner_id: userData.user.id,
+      owner_id: user.id,
       name: body.name,
       description: body.description ?? null,
       match_type: body.matchType ?? "doubles",
