@@ -45,7 +45,9 @@ export function Header() {
           </Link>
           {user ? (
             <>
-              <span className="hidden max-w-[180px] truncate text-slate-500 sm:inline">{user.email}</span>
+              <Link className="hidden max-w-[180px] truncate text-slate-500 hover:text-court-700 sm:inline" href="/account">
+                {user.email}
+              </Link>
               <button className="text-slate-600 hover:text-court-700" onClick={handleLogout} type="button">
                 로그아웃
               </button>

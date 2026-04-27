@@ -23,6 +23,7 @@ npm install
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
 ## Supabase 설정
@@ -74,3 +75,7 @@ supabase/schema.sql   DB 테이블과 RLS 정책
 2. Vercel Project Settings에 환경 변수를 등록합니다.
 3. Build Command는 `npm run build`를 사용합니다.
 4. Supabase의 Authentication URL 설정에 배포 도메인을 추가합니다.
+
+계정 삭제 기능은 Supabase Auth 관리 API를 사용하므로 Vercel 환경변수에
+`SUPABASE_SERVICE_ROLE_KEY`를 반드시 추가해야 합니다. 이 키는 서버 전용이며
+`NEXT_PUBLIC_` 접두사를 붙이면 안 됩니다.
