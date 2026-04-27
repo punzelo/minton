@@ -3,6 +3,8 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { TournamentCard } from "@/components/tournaments/TournamentCard";
 import { getPublicTournaments } from "@/lib/data/tournaments";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const tournaments = await getPublicTournaments();
 

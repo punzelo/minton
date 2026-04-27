@@ -1,9 +1,12 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { createServerSupabase } from "@/lib/supabase/server";
 import type { MatchWithTeams } from "@/types/match";
 import type { Team } from "@/types/team";
 import type { Tournament } from "@/types/tournament";
 
 export async function getPublicTournaments(): Promise<Tournament[]> {
+  noStore();
+
   const supabase = createServerSupabase();
 
   if (!supabase) {
@@ -29,6 +32,8 @@ export async function getTournamentBundle(tournamentId: string): Promise<{
   teams: Team[];
   matches: MatchWithTeams[];
 }> {
+  noStore();
+
   const supabase = createServerSupabase();
 
   if (!supabase) {
